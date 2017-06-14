@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
-    "build": "node build/build.js",
+    "build": "node build/build.js && uglifyjs ./dist/rotatable-resizer.js -c -m -o ./dist/rotatable-resizer.min.js",
     "unit": "cross-env karma start test/unit/karma.conf.js --single-run",
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",
@@ -66,6 +66,7 @@
     "tslint": "^4.5.1",
     "tslint-loader": "^3.4.3",
     "typescript": "^2.2.1",
+    "uglifyjs": "^2.4.11",
     "url-loader": "^0.5.7",
     "vue-class-component": "^5.0.0",
     "vue-loader": "^11.1.4",
