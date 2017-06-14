@@ -14,7 +14,7 @@ interface DragState {
 
 const PREVENT_CLICK_PROP = 'PREVENT_CLICK';
 
-export default function(element: HTMLElement, options: DraggableOptions) {
+export default function(element: Element, options: DraggableOptions) {
   let isDragging = false;
   options = options || {};
   const minDistance = options.minDistance || 3;
