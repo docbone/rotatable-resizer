@@ -1,12 +1,16 @@
 <template>
-  <div class="rr-resizer" :style="{
-    transform: 'rotateZ(' + state.rotation + 'deg)',
-    left: state.left + 'px',
-    top: state.top + 'px',
-    width: state.width + 'px',
-    height: state.height + 'px',
-  }">
-    <div class="rr-rotatable-handle"></div>
+  <div class="rr-resizer"
+    :class="{
+      'rr-resizer--active': !disabled && active
+    }"
+    :style="{
+      transform: 'rotateZ(' + state.rotation + 'deg)',
+      left: state.left + 'px',
+      top: state.top + 'px',
+      width: state.width + 'px',
+      height: state.height + 'px',
+     }">
+    <div class="rr-rotatable-handle" v-if="rotatable" ref="rotateHandle"></div>
     <div class="rr-resizable-handle rr-resizable-n" v-if="hasHandle('n')"></div>
     <div class="rr-resizable-handle rr-resizable-s" v-if="hasHandle('s')"></div>
     <div class="rr-resizable-handle rr-resizable-e" v-if="hasHandle('e')"></div>

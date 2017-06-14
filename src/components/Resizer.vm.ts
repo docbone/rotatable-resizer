@@ -3,10 +3,26 @@ import Component from 'vue-class-component';
 import ResizerState from './resizer-state';
 import draggable from './draggable';
 
+const TYPE_PREFIX = 'rr-resizable-';
+const HANDLE_SELECTOR = '.rr-resizable-handle';
+
 @Component({
   name: 'rotatable-resizer',
 
   props: {
+    disabled: {
+      type: Boolean
+    },
+    active: {
+      type: Boolean,
+      default: true
+    },
+    rotatable: {
+      type: Boolean
+    },
+    draggable: {
+      type: Boolean
+    },
     handles: {
       type: String
     },
@@ -35,6 +51,9 @@ export default class Hello extends Vue {
   rotation: number;
   handles: string;
   aspectRatio: number;
+  rotatable: boolean;
+  draggable: boolean;
+  disabled: boolean;
   state: ResizerState;
 
   data() {
@@ -50,79 +69,72 @@ export default class Hello extends Vue {
     };
   }
 
-  watch = {
-    left(val) {
-      this.state.left = val;
-    },
-    top(val) {
-      this.state.top = val;
-    },
-    width(val) {
-      this.state.width = val;
-    },
-    height(val) {
-      this.state.height = val;
-    },
-    rotation(val) {
-      this.state.rotation = val;
-    }
-  };
+  created() {
+    this.$watch('rotatable', function(val) {
+      if (val) {
+        this.$nextTick(() => this.bindRotateEvent());
+      }
+    });
+
+    this.$watch('handles', function() {
+      this.$nextTick(() => this.bindResizeEvent());
+    });
+
+    const STATE_PROPS = ['width', 'height', 'rotation', 'left', 'top'];
+    STATE_PROPS.forEach((prop) => {
+      this.$watch(prop, function(val) {
+        this.state[prop] = val;
+      });
+    });
+  }
 
   get rectHandles() {
     const handles = this.handles || 'n,e,s,w,nw,ne,se,sw';
     return handles.split(',').map((handle) => handle.trim());
   }
 
+  hasHandle(ord) {
+    return this.rectHandles.indexOf(ord) !== -1;
+  }
+
   mounted() {
     this.bindResizeEvent();
-    this.bindDraggable();
-    this.bindRotatable();
+    this.bindDragEvent();
+    this.bindRotateEvent();
   }
 
-  hasHandle(ord) {
-    const rectHandles = this.rectHandles;
-    return rectHandles.indexOf(ord) !== -1;
-  }
+  bindRotateEvent() {
+    const handle = <HTMLElement>this.$refs.rotateHandle;
+    if (!handle) return;
 
-  bindRotatable() {
-    const handle = this.$el.querySelector('.rr-rotatable-handle');
-    const dragState: any = {};
     const self = this;
-
     draggable(handle, {
-      start(event: MouseEvent) {
-        dragState.startLeft = event.clientX;
-        dragState.startTop = event.clientY;
+      start() {
+        if (self.disabled) return false;
       },
       drag(event: MouseEvent) {
-        const deltaX = event.clientX - dragState.startLeft;
-        const deltaY = event.clientY - dragState.startTop;
-
         const center = self.state.center;
-        const degree = (Math.atan2(event.clientY - center.top, event.clientX - center.left) * 180 / Math.PI + 90) % 360;
-
-        self.state.rotation = degree;
+        self.state.rotation = (Math.atan2(event.clientY - center.top, event.clientX - center.left) * 180 / Math.PI + 90) % 360;
       },
       end() {
-        if (dragState.rect) {
-        }
       }
     });
   }
 
-  bindDraggable() {
+  bindDragEvent() {
     const self = this;
     const dom = this.$el;
     const dragState: any = {};
 
     draggable(dom, {
       start(event: MouseEvent) {
+        if (!self.draggable || self.disabled) return false;
         dragState.startLeft = event.clientX;
-        dragState.startTop = event.clientY;
+        dragState.startY = event.clientY;
       },
       drag(event: MouseEvent) {
         const deltaX = event.clientX - dragState.startLeft;
-        const deltaY = event.clientY - dragState.startTop;
+        const deltaY = event.clientY - dragState.startY;
 
         const rect = self.state.translate(deltaX, deltaY);
 
@@ -144,53 +156,59 @@ export default class Hello extends Vue {
   bindResizeEvent() {
     const self = this;
     const dom = this.$el;
-    let resizeState: any = {};
+
     let aspectRatio = self.aspectRatio;
 
     if (typeof aspectRatio !== 'number') {
       aspectRatio = undefined;
     }
 
-    const makeResizable = function(handle: HTMLElement) {
-      const type = handle.className.split(' ')[1].replace('rr-resizable-', '');
-
-      draggable(handle, {
-        start(event: MouseEvent) {
-          resizeState.startLeft = event.clientX;
-          resizeState.startTop = event.clientY;
-        },
-        drag(event: MouseEvent) {
-          const deltaX = event.clientX - resizeState.startLeft;
-          const deltaY = event.clientY - resizeState.startTop;
-
-          const rect = self.state.dragPoint(type, deltaX, deltaY, {
-            left: resizeState.startLeft,
-            top: resizeState.startTop
-          });
-
-          resizeState.rect = rect;
-
-          if (rect.left !== undefined) {
-            dom.style.left = rect.left + 'px';
-            dom.style.top = rect.top + 'px';
-          }
-          if (rect.width !== undefined) {
-            dom.style.width = rect.width + 'px';
-            dom.style.height = rect.height + 'px';
-          }
-        },
-        end() {
-          if (resizeState.rect) {
-            self.state.reset(resizeState.rect);
-          }
-        }
-      });
-    };
-
-    const handles = dom.querySelectorAll('.rr-resizable-handle');
+    const handles = dom.querySelectorAll(HANDLE_SELECTOR);
 
     for (let i = 0, j = handles.length; i < j; i++) {
-      makeResizable(<HTMLElement>handles[i]);
+      this.makeHandleResizable(<HTMLElement>handles[i]);
     }
+  }
+
+  private makeHandleResizable(handle: HTMLElement) {
+    const self = this;
+    const el = this.$el;
+    const type = handle.className.split(' ')[1].replace(TYPE_PREFIX, '');
+
+    let resizeState: any = {};
+
+    draggable(handle, {
+      start(event: MouseEvent) {
+        if (self.disabled) return false;
+        resizeState.startX = event.clientX;
+        resizeState.startY = event.clientY;
+      },
+      drag(event: MouseEvent) {
+        const deltaX = event.clientX - resizeState.startX;
+        const deltaY = event.clientY - resizeState.startY;
+
+        const rect = self.state.dragPoint(type, deltaX, deltaY, {
+          left: resizeState.startX,
+          top: resizeState.startY
+        });
+
+        resizeState.rect = rect;
+
+        if (rect.left !== undefined) {
+          el.style.left = rect.left + 'px';
+          el.style.top = rect.top + 'px';
+        }
+
+        if (rect.width !== undefined) {
+          el.style.width = rect.width + 'px';
+          el.style.height = rect.height + 'px';
+        }
+      },
+      end() {
+        if (resizeState.rect) {
+          self.state.reset(resizeState.rect);
+        }
+      }
+    });
   }
 };

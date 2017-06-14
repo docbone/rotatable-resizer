@@ -13,8 +13,27 @@ interface DragState {
 }
 
 const PREVENT_CLICK_PROP = 'PREVENT_CLICK';
+const EVENT_BOUND = 'rr-event-bound';
+
+const isBound = function(el: Element) {
+  return el.hasAttribute(EVENT_BOUND);
+};
+
+const markBound = function(el: Element) {
+  if (el && el.setAttribute) {
+    el.setAttribute(EVENT_BOUND, 'DONE');
+  } else {
+    throw new Error('[markBound] element is required!');
+  }
+};
 
 export default function(element: Element, options: DraggableOptions) {
+  if (isBound(element)) {
+    return;
+  } else {
+    markBound(element);
+  }
+
   let isDragging = false;
   options = options || {};
   const minDistance = options.minDistance || 3;
@@ -27,10 +46,11 @@ export default function(element: Element, options: DraggableOptions) {
   };
 
   const start = (event: Event) => {
-    isDragging = true;
-
     if (options.start) {
-      options.start(event);
+      const result = options.start(event);
+      isDragging = result !== false;
+    } else {
+      isDragging = true;
     }
   };
 

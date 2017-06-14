@@ -1,7 +1,8 @@
-$handle-size: 10px;
-$handle-border: 1px solid #08a1ef;
-$handle-background: #fff;
 $rotatable-handle-height: 30px;
+$handle-size: 10px;
+$handle-border-active: 1px solid #08a1ef;
+$handle-border: 1px solid #bbb;
+$handle-background: #fff;
 
 .rr-resizer {
   position: absolute;
@@ -11,16 +12,29 @@ $rotatable-handle-height: 30px;
   border: $handle-border;
 }
 
+.rr-resizer.rr-resizer--active {
+  border: $handle-border-active;
+}
+
+.rr-resizer--active .rr-rotatable-handle {
+  display: block;
+}
+
+.rr-resizer--active .rr-resizable-handle {
+  display: block;
+}
+
 .rr-resizer-content {
   width: 100%;
   height: 100%;
 }
 
 .rr-rotatable-handle {
+  display: none;
   position: absolute;
   left: 50%;
   top: -$rotatable-handle-height;
-  border: $handle-border;
+  border: $handle-border-active;
   box-sizing: border-box;
   width: $handle-size;
   height: $handle-size;
@@ -33,17 +47,18 @@ $rotatable-handle-height: 30px;
 .rr-rotatable-handle::after {
   content: "";
   position: absolute;
-  border-left: $handle-border;
+  border-left: $handle-border-active;
   width: 0;
   top: $handle-size - 2;
   transform: translate(-50%, 0);
-  height: $rotatable-handle-height - $handle-size + 2;
+  height: $rotatable-handle-height - $handle-size / 2;
 }
 
 .rr-resizable-handle {
+  display: none;
   box-sizing: border-box;
   position: absolute;
-  border: $handle-border;
+  border: $handle-border-active;
   width: $handle-size;
   height: $handle-size;
   background: $handle-background;

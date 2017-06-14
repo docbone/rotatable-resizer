@@ -1,11 +1,28 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
+    <div>
+      Rotatable: <input type="checkbox" v-model="rotatable" />
+    </div>
+    <div>
+      Disabled: <input type="checkbox" v-model="disabled" />
+    </div>
+    <div>
+      Active: <input type="checkbox" v-model="active" />
+    </div>
+    <input v-model.number="left" type="number" />
+    <button @click="handles = ''">handles</button>
     <resizer
+      @mousedown.native="active = true"
       handles1="nw,ne,sw,se"
       handles2="e,w"
+      :active="active"
+      :disabled="disabled"
+      :handles="handles"
+      :rotatable="rotatable"
+      draggable
       :rotation="degree"
-      :left="100"
+      :left="left"
       :top="100"
       :width="100"
       :height="100">
