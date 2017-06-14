@@ -1,8 +1,14 @@
+$handle-size: 10px;
+$handle-border: 1px solid #08a1ef;
+$handle-background: #fff;
+$rotatable-handle-height: 30px;
+
 .rr-resizer {
   position: absolute;
   box-sizing: border-box;
   left: 0;
   top: 0;
+  border: $handle-border;
 }
 
 .rr-resizer-content {
@@ -13,21 +19,35 @@
 .rr-rotatable-handle {
   position: absolute;
   left: 50%;
-  top: -16px;
-  border: 1px solid #666;
-  width: 6px;
-  height: 6px;
-  border-radius: 3px;
+  top: -$rotatable-handle-height;
+  border: $handle-border;
+  box-sizing: border-box;
+  width: $handle-size;
+  height: $handle-size;
+  background: $handle-background;
+  border-radius: 50%;
   transform: translate(-50%, -50%);
+  cursor: crosshair;
+}
+
+.rr-rotatable-handle::after {
+  content: "";
+  position: absolute;
+  border-left: $handle-border;
+  width: 0;
+  top: $handle-size - 2;
+  transform: translate(-50%, 0);
+  height: $rotatable-handle-height - $handle-size + 2;
 }
 
 .rr-resizable-handle {
   box-sizing: border-box;
   position: absolute;
-  border: 1px solid #666;
-  width: 6px;
-  height: 6px;
-  border-radius: 3px;
+  border: $handle-border;
+  width: $handle-size;
+  height: $handle-size;
+  background: $handle-background;
+  border-radius: 50%;
   transform: translate(-50%, -50%);
 }
 
@@ -61,7 +81,6 @@
   cursor: nw-resize;
   left: 0;
   top: 0;
-  border-color: blue;
 }
 
 .rr-resizable-ne {

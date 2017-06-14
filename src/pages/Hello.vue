@@ -3,7 +3,7 @@
     <h1>{{ msg }}</h1>
     <resizer
       handles1="nw,ne,sw,se"
-      handles="e,w"
+      handles2="e,w"
       :rotation="degree"
       :left="100"
       :top="100"
@@ -37,9 +37,5 @@ li {
 
 a {
   color: #42b983;
-}
-
-.rr-resizer {
-  border: 1px solid red;
 }
 </style>
