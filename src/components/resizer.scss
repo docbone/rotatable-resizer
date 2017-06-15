@@ -32,6 +32,7 @@ $handle-background: #fff;
 .rr-rotatable-handle {
   display: none;
   position: absolute;
+  text-align: center;
   left: 50%;
   top: -$rotatable-handle-height;
   border: $handle-border-active;

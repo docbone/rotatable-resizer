@@ -9,6 +9,12 @@
       "es2015",
       "es2015.promise"
     ],
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "./src/*"
+      ]
+    },
     "allowJs":true,
     "sourceMap": true,
     "emitDecoratorMetadata": true,

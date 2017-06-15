@@ -108,12 +108,17 @@ export default class Hello extends Vue {
     if (!handle) return;
 
     const self = this;
+    const el = self.$el;
     draggable(handle, {
       start() {
         if (self.disabled) return false;
       },
       drag(event: MouseEvent) {
-        const center = self.state.center;
+        const bounds = el.getBoundingClientRect();
+        const center = {
+          left: bounds.left + bounds.width / 2,
+          top: bounds.top + bounds.height / 2
+        };
         self.state.rotation = (Math.atan2(event.clientY - center.top, event.clientX - center.left) * 180 / Math.PI + 90) % 360;
       },
       end() {
@@ -129,11 +134,11 @@ export default class Hello extends Vue {
     draggable(dom, {
       start(event: MouseEvent) {
         if (!self.draggable || self.disabled) return false;
-        dragState.startLeft = event.clientX;
+        dragState.startX = event.clientX;
         dragState.startY = event.clientY;
       },
       drag(event: MouseEvent) {
-        const deltaX = event.clientX - dragState.startLeft;
+        const deltaX = event.clientX - dragState.startX;
         const deltaY = event.clientY - dragState.startY;
 
         const rect = self.state.translate(deltaX, deltaY);
@@ -176,21 +181,20 @@ export default class Hello extends Vue {
     const type = handle.className.split(' ')[1].replace(TYPE_PREFIX, '');
 
     let resizeState: any = {};
+    let startPoint;
 
     draggable(handle, {
       start(event: MouseEvent) {
         if (self.disabled) return false;
         resizeState.startX = event.clientX;
         resizeState.startY = event.clientY;
+        startPoint = self.state.getPoint(<PointType>type);
       },
       drag(event: MouseEvent) {
         const deltaX = event.clientX - resizeState.startX;
         const deltaY = event.clientY - resizeState.startY;
 
-        const rect = self.state.dragPoint(type, deltaX, deltaY, {
-          left: resizeState.startX,
-          top: resizeState.startY
-        });
+        const rect = self.state.dragPoint(type, deltaX, deltaY, startPoint);
 
         resizeState.rect = rect;
 

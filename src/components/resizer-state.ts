@@ -1,26 +1,3 @@
-interface Point {
-  left: number;
-  top: number;
-}
-
-interface Rect {
-  left: number;
-  top: number;
-  width: number;
-  height: number;
-}
-
-enum RectPointType {
-  TopLeft,
-  TopRight,
-  BottomLeft,
-  BottomRight,
-  CenterLeft,
-  CenterRight,
-  TopCenter,
-  BottomCenter
-}
-
 const toRadians = function(degree: number): number {
   return degree / 180.0 * Math.PI;
 };
@@ -187,7 +164,7 @@ export default class Rectangle {
     return this.rotation !== undefined && this.rotation !== 0;
   }
 
-  getPoint(type: RectPointType): Point {
+  getPoint(type: PointType): Point {
     const { left, top, width, height } = this;
 
     let result: Point = {
@@ -196,35 +173,35 @@ export default class Rectangle {
     };
 
     switch (type) {
-      case RectPointType.TopLeft:
-      case RectPointType.TopRight:
-      case RectPointType.TopCenter:
+      case 'nw':
+      case 'ne':
+      case 'n':
         result.top = top;
         break;
-      case RectPointType.BottomLeft:
-      case RectPointType.BottomCenter:
-      case RectPointType.BottomRight:
+      case 'sw':
+      case 's':
+      case 'se':
         result.top = top + height;
         break;
-      case RectPointType.CenterLeft:
-      case RectPointType.CenterRight:
+      case 'w':
+      case 'e':
         result.top = top + height / 2;
         break;
     }
 
     switch (type) {
-      case RectPointType.TopLeft:
-      case RectPointType.BottomLeft:
-      case RectPointType.CenterLeft:
+      case 'nw':
+      case 'sw':
+      case 'w':
         result.left = left;
         break;
-      case RectPointType.TopRight:
-      case RectPointType.BottomRight:
-      case RectPointType.CenterRight:
+      case 'ne':
+      case 'se':
+      case 'e':
         result.left = left + width;
         break;
-      case RectPointType.TopCenter:
-      case RectPointType.BottomCenter:
+      case 'n':
+      case 's':
         result.left = left + width / 2;
         break;
     }
@@ -233,7 +210,7 @@ export default class Rectangle {
 
     if (rotation !== undefined && rotation !== 0) {
       const center = this.center;
-      result = unRotatePoint(-rotation, result, center);
+      result = rotatePoint(rotation, result, center);
     }
 
     return result;
@@ -244,8 +221,8 @@ export default class Rectangle {
       this.left += deltaX;
       this.top += deltaY;
     } else {
-      const p1 = this.getPoint(RectPointType.TopLeft);
-      const p2 = this.getPoint(RectPointType.BottomRight);
+      const p1 = this.getPoint('nw');
+      const p2 = this.getPoint('se');
 
       p1.left += deltaX;
       p1.top += deltaY;
@@ -266,16 +243,16 @@ export default class Rectangle {
   dragPoint(type: string, deltaX: number = 0, deltaY: number = 0, startPoint: Point) {
     const transformMap = TRANSFORM_MAP[type];
 
-    let p1 = this.getPoint(RectPointType.TopLeft);
-    let p3 = this.getPoint(RectPointType.BottomRight);
+    let p1 = this.getPoint('nw');
+    let p3 = this.getPoint('se');
 
     const rotated = this.rotated;
     const rotation = this.rotation;
 
     if (rotated) {
       if (type === 's' || type === 'n') {
-        const c12 = this.getPoint(RectPointType.TopCenter);
-        const c34 = this.getPoint(RectPointType.BottomCenter);
+        const c12 = this.getPoint('n');
+        const c34 = this.getPoint('s');
 
         const delta = getDeltaOfVector(c12, c34, deltaX, deltaY);
 
@@ -291,8 +268,8 @@ export default class Rectangle {
       }
 
       if (type === 'e' || type === 'w') {
-        const c14 = this.getPoint(RectPointType.CenterLeft);
-        const c23 = this.getPoint(RectPointType.CenterRight);
+        const c14 = this.getPoint('w');
+        const c23 = this.getPoint('e');
 
         const delta = getDeltaOfVector(c14, c23, deltaX, deltaY);
 
@@ -308,8 +285,8 @@ export default class Rectangle {
       }
 
       if (type === 'ne' || type === 'sw') {
-        const p2 = this.getPoint(RectPointType.TopRight);
-        const p4 = this.getPoint(RectPointType.BottomLeft);
+        const p2 = this.getPoint('ne');
+        const p4 = this.getPoint('sw');
 
         if (type === 'ne') {
           p2.left = startPoint.left + deltaX;
