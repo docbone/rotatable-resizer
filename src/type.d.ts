@@ -8,6 +8,7 @@ declare interface Rect {
   top: number;
   width: number;
   height: number;
+  rotation?: number;
 }
 
 declare type PointType = 'nw' | 'ne' | 'se' | 'sw' | 'n' | 'e' | 's' | 'w';

@@ -5,6 +5,7 @@
 </template>
 
 <script lang='ts'>
+import 'spectre.css';
 import App from './App.vm.ts';
 export default App;
 </script>
@@ -14,7 +15,6 @@ export default App;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
   height: 100%;
 }

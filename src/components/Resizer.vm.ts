@@ -93,6 +93,17 @@ export default class Hello extends Vue {
     return handles.split(',').map((handle) => handle.trim());
   }
 
+  get value(): Rect {
+    const state = this.state;
+    return {
+      left: state.left,
+      top: state.top,
+      width: state.width,
+      height: state.height,
+      rotation: state.rotation
+    };
+  }
+
   hasHandle(ord) {
     return this.rectHandles.indexOf(ord) !== -1;
   }
@@ -120,8 +131,10 @@ export default class Hello extends Vue {
           top: bounds.top + bounds.height / 2
         };
         self.state.rotation = (Math.atan2(event.clientY - center.top, event.clientX - center.left) * 180 / Math.PI + 90) % 360;
+        self.emitInputEvent(self.value);
       },
       end() {
+        self.emitChangeEvent();
       }
     });
   }
@@ -142,6 +155,8 @@ export default class Hello extends Vue {
         const deltaY = event.clientY - dragState.startY;
 
         const rect = self.state.translate(deltaX, deltaY);
+        rect.rotation = self.state.rotation;
+        self.emitInputEvent(rect);
 
         dragState.rect = rect;
 
@@ -153,9 +168,19 @@ export default class Hello extends Vue {
       end() {
         if (dragState.rect) {
           self.state.reset(dragState.rect);
+          self.emitChangeEvent();
         }
       }
     });
+  }
+
+  emitInputEvent(rect: Rect) {
+    this.$emit('input', rect);
+  }
+
+  emitChangeEvent() {
+    const rect: Rect = this.value;
+    this.$emit('change', rect);
   }
 
   bindResizeEvent() {
@@ -195,8 +220,10 @@ export default class Hello extends Vue {
         const deltaY = event.clientY - resizeState.startY;
 
         const rect = self.state.dragPoint(type, deltaX, deltaY, startPoint);
-
         resizeState.rect = rect;
+
+        rect.rotation = self.state.rotation;
+        self.emitInputEvent(rect);
 
         if (rect.left !== undefined) {
           el.style.left = rect.left + 'px';
@@ -211,6 +238,7 @@ export default class Hello extends Vue {
       end() {
         if (resizeState.rect) {
           self.state.reset(resizeState.rect);
+          self.emitChangeEvent();
         }
       }
     });

@@ -11,14 +11,20 @@ import Resizer from '../components/Resizer.vue';
 export default class Hello extends Vue {
   degree: number = 30;
   left: number = 100;
-  handles: string = 'nw,ne,sw,se';
-  msg: string = 'Welcome to Your Vue.js App';
-  rotatable: boolean = false;
+  top: number = 100;
+  width: number = 100;
+  height: number = 100;
+  handles: string = '';
+  draggable: boolean = true;
+  rotatable: boolean = true;
   disabled: boolean = false;
   active: boolean = true;
 
-  mymethod(): string {
-    console.log('here we are');
-    return 'ok';
+  handleChange(state: Rect) {
+    this.left = state.left;
+    this.top = state.top;
+    this.width = state.width;
+    this.height = state.height;
+    this.degree = state.rotation;
   }
 };

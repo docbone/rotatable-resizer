@@ -240,7 +240,7 @@ export default class Rectangle {
     this.height = rect.height;
   }
 
-  dragPoint(type: string, deltaX: number = 0, deltaY: number = 0, startPoint: Point) {
+  dragPoint(type: string, deltaX: number = 0, deltaY: number = 0, startPoint: Point): Rect {
     const transformMap = TRANSFORM_MAP[type];
 
     let p1 = this.getPoint('nw');
