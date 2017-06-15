@@ -1,12 +1,14 @@
 {
-  "name": "rotable-resizer",
+  "name": "rotatable-resizer",
   "version": "0.0.1",
   "description": "A rotatable resizer component for Vue.js.",
   "author": "long.zhang@ele.me",
-  "private": true,
+  "license": "MIT",
+  "main": "dist/resizer.js",
   "scripts": {
+    "prepublish": "npm run build",
     "dev": "node build/dev-server.js",
-    "build": "node build/build.js && uglifyjs ./dist/rotatable-resizer.js -c -m -o ./dist/rotatable-resizer.min.js",
+    "build": "node build/build.js && uglifyjs ./dist/resizer.js -c -m -o ./dist/resizer.min.js",
     "unit": "cross-env karma start test/unit/karma.conf.js --single-run",
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",

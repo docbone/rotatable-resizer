@@ -43,7 +43,7 @@ const HANDLE_SELECTOR = '.rr-resizable-handle';
     }
   }
 })
-export default class Hello extends Vue {
+export default class Resizer extends Vue {
   left: number;
   top: number;
   width: number;

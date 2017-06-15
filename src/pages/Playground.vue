@@ -87,8 +87,8 @@
 </template>
 
 <script lang='ts'>
-import Hello from "./Hello.vm";
-export default Hello;
+import Playground from "./Playground.vm";
+export default Playground;
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
