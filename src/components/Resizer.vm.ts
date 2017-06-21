@@ -128,6 +128,7 @@ export default {
         start() {
           if (self.disabled) return false;
           self.dragging = true;
+          self.emitBeforeInputEvent();
         },
         drag(event: MouseEvent) {
           const bounds = el.getBoundingClientRect();
@@ -156,6 +157,7 @@ export default {
           dragState.startX = event.clientX;
           dragState.startY = event.clientY;
           self.dragging = true;
+          self.emitBeforeInputEvent();
         },
         drag(event: MouseEvent) {
           const deltaX = event.clientX - dragState.startX;
@@ -214,6 +216,7 @@ export default {
           resizeState.startY = event.clientY;
           startPoint = self.state.getPoint(<PointType>type);
           self.dragging = true;
+          self.emitBeforeInputEvent();
         },
         drag(event: MouseEvent) {
           const deltaX = event.clientX - resizeState.startX;
