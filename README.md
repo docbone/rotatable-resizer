@@ -17,6 +17,8 @@ npm i rotatable-resizer --save
 
 ## Usage
 
+You can view Online [Demo](https://jsfiddle.net/eko177qe/) here.
+
 ```HTML
 <rotatable-resizer :width="100" :height="100" :left="0" :top="0" rotatable>
 </rotatable-resizer>
