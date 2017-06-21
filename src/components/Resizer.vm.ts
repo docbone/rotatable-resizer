@@ -51,7 +51,8 @@ export default {
     }, this.rotation);
 
     return {
-      state
+      state,
+      dragging: false
     };
   },
 
@@ -69,7 +70,9 @@ export default {
     const STATE_PROPS = ['width', 'height', 'rotation', 'left', 'top'];
     STATE_PROPS.forEach((prop) => {
       this.$watch(prop, function(val) {
-        this.state[prop] = val;
+        if (!this.dragging) {
+          this.state[prop] = val;
+        }
       });
     });
   },
@@ -99,6 +102,18 @@ export default {
   },
 
   methods: {
+    emitInputEvent(rect: Rect) {
+      this.$emit('input', rect);
+    },
+
+    emitChangeEvent() {
+      this.$emit('change', this.value);
+    },
+
+    emitBeforeInputEvent() {
+      this.$emit('before-input', this.value);
+    },
+
     hasHandle(ord) {
       return this.rectHandles.indexOf(ord) !== -1;
     },
@@ -112,6 +127,7 @@ export default {
       draggable(handle, {
         start() {
           if (self.disabled) return false;
+          self.dragging = true;
         },
         drag(event: MouseEvent) {
           const bounds = el.getBoundingClientRect();
@@ -124,6 +140,7 @@ export default {
         },
         end() {
           self.emitChangeEvent();
+          self.dragging = false;
         }
       });
     },
@@ -138,6 +155,7 @@ export default {
           if (!self.draggable || self.disabled) return false;
           dragState.startX = event.clientX;
           dragState.startY = event.clientY;
+          self.dragging = true;
         },
         drag(event: MouseEvent) {
           const deltaX = event.clientX - dragState.startX;
@@ -159,17 +177,9 @@ export default {
             self.state.reset(dragState.rect);
             self.emitChangeEvent();
           }
+          self.dragging = false;
         }
       });
-    },
-
-    emitInputEvent(rect: Rect) {
-      this.$emit('input', rect);
-    },
-
-    emitChangeEvent() {
-      const rect: Rect = this.value;
-      this.$emit('change', rect);
     },
 
     bindResizeEvent() {
@@ -203,6 +213,7 @@ export default {
           resizeState.startX = event.clientX;
           resizeState.startY = event.clientY;
           startPoint = self.state.getPoint(<PointType>type);
+          self.dragging = true;
         },
         drag(event: MouseEvent) {
           const deltaX = event.clientX - resizeState.startX;
@@ -229,6 +240,7 @@ export default {
             self.state.reset(resizeState.rect);
             self.emitChangeEvent();
           }
+          self.dragging = false;
         }
       });
     }
