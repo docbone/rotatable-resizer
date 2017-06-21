@@ -2,7 +2,27 @@
 
 > A rotatable resizer component for Vue.js.
 
-## Build Setup
+## Install
+
+You can install the library in two ways:
+
+```Bash
+npm i rotatable-resizer --save
+```
+
+```HTML
+<script src="https://unpkg.com/vue"></script>
+<script src="https://unpkg.com/rotatable-resizer"></script>
+```
+
+## Usage
+
+```HTML
+<rotatable-resizer :width="100" :height="100" :left="0" :top="0" rotatable>
+</rotatable-resizer>
+```
+
+## Develop
 
 ``` bash
 # install dependencies
@@ -13,18 +33,6 @@ npm run dev
 
 # build for production with minification
 npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-
-# run unit tests
-npm run unit
-
-# run e2e tests
-npm run e2e
-
-# run all tests
-npm test
 ```
 
 ## License
