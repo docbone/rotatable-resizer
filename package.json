@@ -75,7 +75,6 @@
     "typescript": "^2.2.1",
     "uglifyjs": "^2.4.11",
     "url-loader": "^0.5.7",
-    "vue-class-component": "^5.0.0",
     "vue-loader": "^11.1.4",
     "vue-style-loader": "^2.0.0",
     "vue-template-compiler": "^2.2.4",
