@@ -1,6 +1,6 @@
 {
   "name": "rotatable-resizer",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A rotatable resizer component for Vue.js.",
   "author": "long.zhang@ele.me",
   "license": "MIT",
