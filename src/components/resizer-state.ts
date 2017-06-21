@@ -216,10 +216,14 @@ export default class Rectangle {
     return result;
   }
 
-  translate(deltaX: number = 0, deltaY: number = 0) {
+  translate(deltaX: number = 0, deltaY: number = 0): Rect {
     if (!this.rotated) {
-      this.left += deltaX;
-      this.top += deltaY;
+      return {
+        left: this.left + deltaX,
+        top: this.top + deltaY,
+        width: this.width,
+        height: this.height
+      };
     } else {
       const p1 = this.getPoint('nw');
       const p2 = this.getPoint('se');

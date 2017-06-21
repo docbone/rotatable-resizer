@@ -19,6 +19,11 @@ const webpackConfig = merge(baseWebpackConfig, {
   entry: {
     'resizer': './src/index.ts'
   },
+  output: {
+    library: 'RotatableResizer',
+    libraryTarget: 'umd',
+    umdNamedDefine: true
+  },
   externals: {
     vue: {
       root: 'Vue',

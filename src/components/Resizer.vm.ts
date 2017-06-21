@@ -19,7 +19,8 @@ export default {
       type: Boolean
     },
     draggable: {
-      type: Boolean
+      type: Boolean,
+      default: true
     },
     handles: {
       type: String
