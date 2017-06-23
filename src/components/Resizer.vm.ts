@@ -1,8 +1,8 @@
 import ResizerState from './resizer-state';
 import draggable from './draggable';
 
-const TYPE_PREFIX = 'rr-resizable-';
-const HANDLE_SELECTOR = '.rr-resizable-handle';
+const TYPE_PREFIX = 'rr-ord-';
+const HANDLE_SELECTOR = '.rr-handle';
 
 export default {
   name: 'rotatable-resizer',
@@ -17,6 +17,10 @@ export default {
     },
     rotatable: {
       type: Boolean
+    },
+    dragMode: {
+      type: String,
+      default: 'content'
     },
     draggable: {
       type: Boolean,
@@ -152,6 +156,7 @@ export default {
       const dragState: any = {};
 
       draggable(dom, {
+        handle: self.dragMode === 'border' ? '.rr-bar' : null,
         start(event: MouseEvent) {
           if (!self.draggable || self.disabled) return false;
           dragState.startX = event.clientX;

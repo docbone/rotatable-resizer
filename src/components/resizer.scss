@@ -1,7 +1,7 @@
 $rotatable-handle-height: 30px;
 $handle-size: 10px;
 $handle-border-active: 1px solid #08a1ef;
-$handle-border: 1px solid #bbb;
+$handle-border: 1px solid transparent;
 $handle-background: #fff;
 
 .rr-resizer {
@@ -12,24 +12,12 @@ $handle-background: #fff;
   border: $handle-border;
 }
 
-.rr-resizer.rr-resizer--active {
-  border: $handle-border-active;
-}
-
-.rr-resizer--active .rr-rotatable-handle {
-  display: block;
-}
-
-.rr-resizer--active .rr-resizable-handle {
-  display: block;
-}
-
-.rr-resizer-content {
+.rr-content {
   width: 100%;
   height: 100%;
 }
 
-.rr-rotatable-handle {
+.rr-rotate-handle {
   display: none;
   position: absolute;
   text-align: center;
@@ -46,7 +34,7 @@ $handle-background: #fff;
   z-index: 1;
 }
 
-.rr-rotatable-handle::after {
+.rr-rotate-handle::after {
   content: "";
   position: absolute;
   border-left: $handle-border-active;
@@ -56,7 +44,7 @@ $handle-background: #fff;
   height: $rotatable-handle-height - $handle-size / 2;
 }
 
-.rr-resizable-handle {
+.rr-handle {
   display: none;
   box-sizing: border-box;
   position: absolute;
@@ -66,58 +54,152 @@ $handle-background: #fff;
   background: $handle-background;
   border-radius: 50%;
   transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.rr-drag-border .rr-bar {
+  cursor: move;
+}
+
+.rr-bar {
+  position: absolute;
+  box-sizing: border-box;
   z-index: 1;
+
+  &.rr-ord-n {
+    &::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      left: 0;
+      top: $handle-size / 2;
+      border-top: $handle-border;
+    }
+    transform: translate(0, -50%);
+    left: 0;
+    right: 0;
+    top: 0;
+    height: $handle-size;
+  }
+
+  &.rr-ord-s {
+    &::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      left: 0;
+      top: $handle-size / 2;
+      border-top: $handle-border;
+    }
+    transform: translate(0, 50%);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: $handle-size;
+  }
+
+  &.rr-ord-e {
+    &::after {
+      content: "";
+      position: absolute;
+      height: 100%;
+      left: $handle-size / 2;
+      top: 0;
+      border-top: $handle-border;
+    }
+    transform: translate(-50%, 0);
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: $handle-size;
+  }
+
+  &.rr-ord-w {
+    &::after {
+      content: "";
+      position: absolute;
+      height: 100%;
+      left: $handle-size / 2;
+      top: 0;
+      border-top: $handle-border;
+    }
+    transform: translate(50%, 0);
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: $handle-size;
+  }
 }
 
-.rr-resizable-n {
-  cursor: n-resize;
-  left: 50%;
-  top: 0;
+.rr-handle {
+  &.rr-ord-n {
+    cursor: n-resize;
+    left: 50%;
+    top: 0;
+  }
+
+  &.rr-ord-s {
+    cursor: s-resize;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 50%);
+  }
+
+  &.rr-ord-e {
+    cursor: e-resize;
+    right: 0;
+    top: 50%;
+    transform: translate(50%, -50%);
+  }
+
+  &.rr-ord-w {
+    cursor: w-resize;
+    left: 0;
+    top: 50%;
+  }
+
+  &.rr-ord-nw {
+    cursor: nw-resize;
+    left: 0;
+    top: 0;
+  }
+
+  &.rr-ord-ne {
+    cursor: ne-resize;
+    right: 0;
+    top: 0;
+    transform: translate(50%, -50%);
+  }
+
+  &.rr-ord-se {
+    cursor: se-resize;
+    bottom: 0;
+    right: 0;
+    transform: translate(50%, 50%);
+  }
+
+  &.rr-ord-sw {
+    cursor: sw-resize;
+    bottom: 0;
+    left: 0;
+    transform: translate(-50%, 50%);
+  }
 }
 
-.rr-resizable-s {
-  cursor: s-resize;
-  bottom: 0;
-  left: 50%;
-  transform: translate(-50%, 50%);
-}
+.rr-resizer--active {
+  .rr-rotate-handle {
+    display: block;
+  }
 
-.rr-resizable-e {
-  cursor: e-resize;
-  right: 0;
-  top: 50%;
-  transform: translate(50%, -50%);
-}
+  .rr-handle {
+    display: block;
+  }
 
-.rr-resizable-w {
-  cursor: w-resize;
-  left: 0;
-  top: 50%;
-}
+  .rr-bar.rr-ord-n::after, .rr-bar.rr-ord-s::after {
+    border-top: $handle-border-active;
+  }
 
-.rr-resizable-nw {
-  cursor: nw-resize;
-  left: 0;
-  top: 0;
-}
-
-.rr-resizable-ne {
-  cursor: ne-resize;
-  right: 0;
-  top: 0;
-  transform: translate(50%, -50%);
-}
-
-.rr-resizable-se {
-  cursor: se-resize;
-  bottom: 0;
-  right: 0;
-  transform: translate(50%, 50%);
-}
-
-.rr-resizable-sw {
-  cursor: sw-resize;
-  bottom: 0;
-  left: 0;
-  transform: translate(-50%, 50%);
+  .rr-bar.rr-ord-e::after, .rr-bar.rr-ord-w::after {
+    border-left: $handle-border-active;
+  }
 }
